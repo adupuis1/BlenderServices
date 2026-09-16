@@ -47,6 +47,13 @@ class ProjectDetails(SQLModel, table =True):
     poly_count: int  | None = None
     external_paths: list[dict] = Field(default_factory=list, sa_type=JSON)
     scanned_at: datetime = Field(default_factory=utc_now, sa_type=TS)
+    file_size_bytes: int | None = None
+    addons: list[str] = Field(default_factory=list, sa_type=JSON)
+
+    # Security flags. Any of these rejects the project.
+    has_registered_scripts: bool = False
+    has_python_drivers: bool = False
+    freestyle_enabled: bool = False
     
     project: Project | None = Relationship(back_populates="project_details")
 
