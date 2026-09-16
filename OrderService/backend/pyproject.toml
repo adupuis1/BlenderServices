@@ -21,6 +21,6 @@ build-backend = "uv_build"
 
 [tool.uv]
 package = false
-
-[tool.uv.sources]
-common = { workspace = true }
+ 
+[dependency-groups]
+dev = ["pytest>=9.1.1"]

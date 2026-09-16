@@ -9,3 +9,5 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Blender Services"
     API_V1_STR: str = "/api/v1"
     DATABASE_URL: str = "postgresql+psycopg://blender:dev@localhost:5433/blender"
+
+settings = Settings()
