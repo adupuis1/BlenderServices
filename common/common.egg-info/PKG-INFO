@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: common
+Version: 0.1.0
+Summary: Add your description here
+Author-email: Anatole Dupuis <anatole.dupuis@gmail.com>
+Requires-Python: >=3.14
+Description-Content-Type: text/markdown
+Requires-Dist: boto3>=1.43.95
+Requires-Dist: botocore>=1.43.95
+Requires-Dist: httpx>=0.28.1
+Requires-Dist: pillow>=12.3.0
+Requires-Dist: psycopg[binary]>=3.3.5
+Requires-Dist: pydantic-settings>=2.15.0
+Requires-Dist: pyjwt[crypto]>=2.14.0
+Requires-Dist: sqlmodel>=0.0.42
+Requires-Dist: zstandard>=0.25.0

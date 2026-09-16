@@ -54,6 +54,12 @@ wheels = [
 name = "blenderservices"
 version = "0.1.0"
 source = { virtual = "." }
+dependencies = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "pytest", specifier = ">=9.1.1" }]
 
 [[package]]
 name = "boto3"
@@ -626,11 +632,19 @@ dependencies = [
     { name = "fastapi", extra = ["standard"] },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "common", editable = "common" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.141.1" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=9.1.1" }]
 
 [[package]]
 name = "packaging"
@@ -709,11 +723,19 @@ dependencies = [
     { name = "fastapi", extra = ["standard"] },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "common", editable = "common" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.141.1" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=9.1.1" }]
 
 [[package]]
 name = "psycopg"
