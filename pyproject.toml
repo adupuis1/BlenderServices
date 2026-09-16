@@ -1,0 +1,16 @@
+[project]
+name = "blenderservices"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = []
+
+[tool.uv.workspace]
+members = [
+    "common",
+    "ProjectService/backend",
+    "OrderService/backend",
+]
+
+[tool.uv.sources]
+common = { workspace = true }
+
