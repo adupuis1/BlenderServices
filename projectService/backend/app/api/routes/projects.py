@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Response
 from sqlmodel import select
 
-from api.deps import CurrentCaller
+from app.api.deps import CurrentCaller
 
 from app.models import (
     Project, ProjectCreate, ProjectDetails, ProjectPublic, ProjectStatus, ProjectUpdate

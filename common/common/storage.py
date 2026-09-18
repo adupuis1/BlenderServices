@@ -23,7 +23,7 @@ NOT_FOUND = {"404", "NoSuchKey", "NoSuchBucket", "NotFound"}
 def _client(endpoint: str):
     return boto3.client(
         "s3",
-        enpoint_url=endpoint,
+        endpoint_url=endpoint,
         aws_access_key_id=settings.S3_ACCESS_KEY,
         aws_secret_access_key=settings.S3_SECRET_KEY,
         region_name="us-east-1",
