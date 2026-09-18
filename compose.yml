@@ -19,7 +19,7 @@ services:
       retries: 20
       
   minio:
-    image: minio/minio:latest
+    image: quay.io/minio/minio:latest
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
@@ -35,6 +35,19 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
+  backend:
+    build:
+      context: ./projectService/backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:dev@db:5433/postgres
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   db-data:
   minio-data:
