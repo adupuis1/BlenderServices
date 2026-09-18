@@ -10,7 +10,7 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Build context is the repo root, so both members of the workspace are available.
 COPY pyproject.toml uv.lock ./
 COPY common/ ./common/
-COPY ./projectService/backend/pyproject.toml ./projectService/backend/pyproject.toml
+COPY projectService/backend/pyproject.toml ./projectService/backend/pyproject.toml
  
 RUN uv sync --frozen --no-dev --package projectservice
  

@@ -29,13 +29,13 @@ def add_project(body: ProjectCreate, caller: CurrentCaller, session: SessionDep)
     project = Project(
         owner_user_id=caller.id,
         name=body.name,
-        blend_key=f"projects/{caller.id}/{uuid.uui4()}.blend"
+        blend_key=f"projects/{caller.id}/{uuid.uuid4()}.blend"
     )
     session.add(project)
     session.commit()
     session.refresh(project)
     return {
-        "project": ProjectPublic.model_validate(project, form_attributes=True),
+        "project": ProjectPublic.model_validate(project, from_attributes=True),
         "upload_url": storage.upload_url(project.blend_key),
     }
 
