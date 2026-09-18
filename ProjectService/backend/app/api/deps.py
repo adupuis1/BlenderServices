@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from common.common.auth import Caller, InvalidToken, caller_from_token
-from common.common.db import SessionDep
+from common.auth import Caller, InvalidToken, caller_from_token
+from common.db import SessionDep
 
 bearer = HTTPBearer(auto_error=False)
 

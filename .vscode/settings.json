@@ -1,0 +1,8 @@
+{
+  "python.defaultInterpreterPath": "/home/anatole/dev/myServices/BlenderServices/.venv/bin/python",
+  "python.analysis.extraPaths": [
+    "/home/anatole/dev/myServices/BlenderServices/common",
+    "/home/anatole/dev/myServices/BlenderServices/ProjectService/backend",
+    "/home/anatole/dev/myServices/BlenderServices/OrderService/backend"
+  ]
+}

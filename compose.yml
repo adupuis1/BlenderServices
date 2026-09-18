@@ -37,3 +37,4 @@ services:
       retries: 20
 volumes:
   db-data:
+  minio-data:

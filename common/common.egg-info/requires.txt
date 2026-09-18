@@ -1,9 +1,0 @@
-boto3>=1.43.95
-botocore>=1.43.95
-httpx>=0.28.1
-pillow>=12.3.0
-psycopg[binary]>=3.3.5
-pydantic-settings>=2.15.0
-pyjwt[crypto]>=2.14.0
-sqlmodel>=0.0.42
-zstandard>=0.25.0

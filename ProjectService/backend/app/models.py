@@ -26,7 +26,8 @@ class Project(SQLModel, table=True):
     status: ProjectStatus = Field(default=ProjectStatus.PENDING_UPLOAD, index=True)
     created_at: datetime = Field(default_factory=utc_now, sa_type=TS)
     blender_series: str |None = Field(default=None, max_length=8)
-
+    reject_reason: str | None = Field(default=None, max_length=500)
+    
     project_details: Optional["ProjectDetails"] = Relationship(
         back_populates="project",
         sa_relationship_kwargs={"cascade": "all, delete-orphan", "uselist": False},
@@ -54,14 +55,20 @@ class ProjectDetails(SQLModel, table =True):
     has_registered_scripts: bool = False
     has_python_drivers: bool = False
     freestyle_enabled: bool = False
-    
+
     project: Project | None = Relationship(back_populates="project_details")
 
 
 class ProjectCreate(SQLModel):
     name: str = Field(min_length=1, max_length=200)
 
+class ProjectUpdate(SQLModel):
+    name: str | None = Field(default=None, min_length=1, max_length=200)
+
 class ProjectPublic(SQLModel):
     id: uuid.UUID
     name: str
     status: ProjectStatus
+    blender_series: str | None
+    reject_reason: str | None
+    created_at: datetime
