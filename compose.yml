@@ -38,12 +38,12 @@ services:
 
   backend:
     build:
-      context: ./projectService/backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: projectService/backend/Dockerfile
     environment:
-      DATABASE_URL: postgresql+psycopg://postgres:dev@db:5433/postgres
+      DATABASE_URL: postgresql+psycopg://blender:${POSTGRES_PASSWORD}@db:5432/blender
     ports:
-      - "8000:8000"
+      - "8010:8000"
     depends_on:
       db:
         condition: service_healthy
