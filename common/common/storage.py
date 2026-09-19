@@ -6,11 +6,9 @@ from common.config import settings
 
 BUCKET = settings.S3_BUCKET
 
-
 # request_checksum_calculation="when_required" stops boto3 adding a checksum
 # header the presigned URL was not signed for. Without it a plain PUT from
 # curl or a browser against a URL this module generated is rejected.
-
 S3_CONFIG = Config(
     signature_version="s3v4",
     request_checksum_calculation="when_required",
@@ -20,21 +18,27 @@ S3_CONFIG = Config(
 
 NOT_FOUND = {"404", "NoSuchKey", "NoSuchBucket", "NotFound"}
 
-def _client(endpoint: str):
+
+def make_client(endpoint: str, access_key: str, secret_key: str):
     return boto3.client(
         "s3",
         endpoint_url=endpoint,
-        aws_access_key_id=settings.S3_ACCESS_KEY,
-        aws_secret_access_key=settings.S3_SECRET_KEY,
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
         region_name="us-east-1",
-        config=S3_CONFIG
+        config=S3_CONFIG,
     )
 
-internal = _client(settings.S3_INTERNAL_ENDPOINT)
-public = _client(settings.S3_PUBLIC_ENDPOINT)
+
+internal = make_client(settings.S3_INTERNAL_ENDPOINT, settings.S3_ACCESS_KEY,
+                       settings.S3_SECRET_KEY)
+public = make_client(settings.S3_PUBLIC_ENDPOINT, settings.S3_ACCESS_KEY,
+                     settings.S3_SECRET_KEY)
+
 
 def _code(exc: ClientError) -> str:
     return str(exc.response.get("Error", {}).get("Code", ""))
+
 
 def ensure_bucket() -> None:
     try:
