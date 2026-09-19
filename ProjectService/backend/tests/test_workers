@@ -1,0 +1,79 @@
+import uuid
+
+import pytest
+from botocore.exceptions import ClientError
+
+from app.models import Project, ProjectStatus
+from app.scanner import worker
+from common import storage
+
+CLEAN_SCAN = {
+    "engine": "CYCLES", "samples": 128, "resolution_x": 1920, "resolution_y": 1080,
+    "frame_start": 1, "frame_end": 250, "poly_count": 12, "addons": ["cycles"],
+    "has_registered_scripts": False, "has_python_drivers": False,
+    "freestyle_enabled": False, "external_paths": [],
+    "blender_series": "4.5", "file_size_bytes": 1024,
+}
+
+
+class FakeStorage:
+    def __init__(self, fail=False):
+        self.fail = fail
+
+    def download_file(self, bucket, key, dest):
+        if self.fail:
+            raise ClientError({"Error": {"Code": "503", "Message": "down"}}, "GetObject")
+        open(dest, "wb").write(b"BLENDER-v405")
+
+
+@pytest.fixture
+def waiting(session):
+    project = Project(owner_user_id=uuid.uuid4(), name="cube",
+                      blend_key=f"projects/{uuid.uuid4()}.blend",
+                      status=ProjectStatus.SCANNING)
+    session.add(project)
+    session.commit()
+    return project.id
+
+
+def test_nothing_waiting_returns_false(session):
+    assert worker.process_one(session) is False
+
+
+def test_clean_file_becomes_ready_with_details(session, waiting, monkeypatch):
+    monkeypatch.setattr(storage, "internal", FakeStorage())
+    monkeypatch.setattr(worker, "scan_file", lambda path: dict(CLEAN_SCAN))
+    assert worker.process_one(session) is True
+
+    project = session.get(Project, waiting)
+    assert project.status is ProjectStatus.READY
+    assert project.blender_series == "4.5"
+    assert project.project_details.addons == ["cycles"]
+
+
+def test_unsafe_file_is_rejected_with_the_reason(session, waiting, monkeypatch):
+    monkeypatch.setattr(storage, "internal", FakeStorage())
+    monkeypatch.setattr(worker, "scan_file",
+                        lambda path: {**CLEAN_SCAN, "has_python_drivers": True})
+    worker.process_one(session)
+    project = session.get(Project, waiting)
+    assert project.status is ProjectStatus.REJECTED
+    assert "Python drivers" in project.reject_reason
+
+
+def test_unreadable_file_is_rejected(session, waiting, monkeypatch):
+    monkeypatch.setattr(storage, "internal", FakeStorage())
+
+    def boom(path):
+        raise ValueError("Not a valid .blend file")
+
+    monkeypatch.setattr(worker, "scan_file", boom)
+    worker.process_one(session)
+    assert "Not a valid .blend file" in session.get(Project, waiting).reject_reason
+
+
+def test_storage_outage_leaves_it_scanning(session, waiting, monkeypatch):
+    monkeypatch.setattr(storage, "internal", FakeStorage(fail=True))
+    assert worker.process_one(session) is False
+    session.expire_all()
+    assert session.get(Project, waiting).status is ProjectStatus.SCANNING

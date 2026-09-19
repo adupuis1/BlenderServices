@@ -57,6 +57,22 @@ services:
       minio:
         condition: service_healthy
   
+  scanner:
+    build:
+      context: .
+      dockerfile: ProjectService/backend/Dockerfile
+    restart: unless-stopped
+    command: ["python", "-m", "app.scanner.worker"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://blender:${POSTGRES_PASSWORD}@db:5432/blender
+      S3_INTERNAL_ENDPOINT: http://minio:9000
+      BLENDER_CACHE_DIR: /blender-cache
+    volumes:
+      - blender-cache:/blender-cache
+    depends_on:
+      project-backend:
+        condition: service_healthy
+        
   gateway:
     image: nginx:1.27-alpine
     restart: unless-stopped
@@ -70,13 +86,12 @@ services:
     depends_on:
       - project-backend
 
-
-
-volumes:
-  db-data:
-  minio-data:
-
 networks:
   login:
     external: true
     name: ${LOGIN_NETWORK}
+
+volumes:
+  db-data:
+  minio-data:
+  blender-cache:
