@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, Query
 from sqlmodel import select
 
 from app.api.deps import CurrentCaller
@@ -39,3 +39,21 @@ def add_project(body: ProjectCreate, caller: CurrentCaller, session: SessionDep)
         "upload_url": storage.upload_url(project.blend_key),
     }
 
+
+@router.get("", status_code=200)
+def get_projects(caller: CurrentCaller, session: SessionDep, limit: int = 100):
+    return session.exec(
+        select(Project)
+        .where(Project.owner_user_id == caller.id)
+        .order_by(Project.created_at.desc())
+        .limit(min(limit, 500))
+    ).all()
+
+
+@router.get("{project_id}")
+def get_project(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDep):
+    project = owned(session, project_id, caller.id)
+    return {
+        "project": ProjectPublic.model_validate(project, from_attributes=True),
+        "details": project.project_details
+    }
