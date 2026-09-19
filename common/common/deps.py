@@ -7,7 +7,7 @@ from common.auth import Caller, InvalidToken, caller_from_token
 from common.config import settings
 
 oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.LOGIN_PUBLIC_URL}/api/v1/login/access-token"
+    tokenUrl="/api/v1/login/access-token"
 )
 
 def current_caller(token: Annotated[str, Depends(oauth2)]) -> Caller:

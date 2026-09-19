@@ -36,7 +36,7 @@ services:
       timeout: 5s
       retries: 20
 
-  backend:
+  project-backend:
     build:
       context: .
       dockerfile: ProjectService/backend/Dockerfile

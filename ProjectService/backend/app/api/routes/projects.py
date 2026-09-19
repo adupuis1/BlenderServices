@@ -41,12 +41,12 @@ def add_project(body: ProjectCreate, caller: CurrentCaller, session: SessionDep)
 
 
 @router.get("", response_model=list[ProjectPublic])
-def get_projects(caller: CurrentCaller, session: SessionDep, limit: int = 100):
+def get_projects(caller: CurrentCaller, session: SessionDep, limit: int = Query(100, ge=1, le=500)):
     return session.exec(
         select(Project)
         .where(Project.owner_user_id == caller.id)
         .order_by(Project.created_at.desc())
-        .limit(min(limit, 500))
+        .limit(limit)
     ).all()
 
 

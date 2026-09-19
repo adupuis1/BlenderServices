@@ -11,8 +11,8 @@ from common.errors import DomainError
 
 app = FastAPI(
     title="projectService",
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    docs_url="/api/docs",
+    openapi_url=f"{settings.API_V1_STR}/projects/openapi.json",
+    docs_url=f"{settings.API_V1_STR}/projects/api/docs",
     redoc_url=None,
 )
 
@@ -22,4 +22,4 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.exception_handler(DomainError)
 async def domain_error_handler(request: Request, exc: DomainError):
-    return JSONResponse(statuscode=exc.status_code, content={"detail": str(BaseException)})
+    return JSONResponse(statuscode=exc.status_code, content={"detail": str(exc)})
