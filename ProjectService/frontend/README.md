@@ -63,10 +63,27 @@ src/
     Upload/                         placeholder
 ```
 
-## Not built yet
+## Upload flow
 
-- **Upload:** creating a project only creates the database row and returns a presigned
-  `upload_url` (MinIO). The `.blend` file still has to be `PUT` to that URL from the browser.
-  That needs CORS on MinIO for the gateway origin.
-- **Project detail:** `GET /api/v1/projects/{id}` (project plus scan details).
-- **Rename** (`PATCH`) and **delete**.
+The create page has a file picker (`<input type="file">`, which opens the OS file browser).
+The picked file stays in browser memory until it's uploaded. "Create project" then runs
+three calls (`createWithUpload` in `features/projects/model.ts`):
+
+1. **Create:** `POST /api/v1/projects` saves the row (`pending_upload`) and returns a
+   presigned `upload_url`.
+2. **Upload:** the browser `PUT`s the `.blend` straight to MinIO with that URL, so the
+   API never sees the bytes. `putFile()` uses XHR for the progress bar.
+3. **Confirm:** `POST /api/v1/projects/{id}/complete`. The backend checks the file is in
+   storage and moves the project to `scanning`.
+
+The scanner worker then sets `ready` or `rejected`. The detail page and the list poll
+while anything is `scanning`, so the status updates by itself.
+
+**MinIO needs CORS** for the gateway origin (`http://localhost:8088`), or step 2 fails with
+"could not reach storage". Set it on the bucket with `mc admin config` / the MinIO console.
+
+### Not built
+- **Retry an upload:** `upload_url` is only returned by `POST /projects`, so a project
+  stuck in `pending_upload` can't be fixed from the UI. It needs an endpoint that issues a
+  fresh URL (e.g. `GET /projects/{id}/upload-url`). The detail page says so and offers delete.
+- **Download** the `.blend` again, and anything to do with render orders (OrderService).

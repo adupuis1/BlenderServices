@@ -8,7 +8,6 @@ import { RequireLogin } from './shared/RequireLogin'
 import { ProjectsPage } from './features/projects/List/ProjectsPage'
 import { NewProjectPage } from './features/projects/Create/NewProjectPage'
 import { ProjectDetailPage } from './features/projects/Detail/ProjectDetailPage'
-import { UploadPage } from './features/projects/Upload/UploadPage'
 
 import './index.css'
 
@@ -20,7 +19,6 @@ const router = createBrowserRouter(
         { path: '/', element: <ProjectsPage /> },
         { path: '/new', element: <NewProjectPage /> },
         { path: '/:id', element: <ProjectDetailPage /> },
-        { path: '/:id/upload', element: <UploadPage /> },
         { path: '/*', element: <Navigate to="/" replace /> },
       ],
     },

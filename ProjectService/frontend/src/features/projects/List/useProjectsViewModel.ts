@@ -6,6 +6,9 @@ export function useProjectsViewModel() {
         queryKey: ['projects'],
         queryFn: projectsApi.list,
         retry: false,
+        // keep the list moving while the scanner works through a project
+        refetchInterval: (query) =>
+            query.state.data?.some((p) => p.status === 'scanning') ? 5000 : false,
     })
 
     return {

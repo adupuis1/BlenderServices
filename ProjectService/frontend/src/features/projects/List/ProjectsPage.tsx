@@ -1,14 +1,6 @@
 import { Link } from 'react-router'
-import { ButtonLink, Card, ErrorMessage, Page } from '../../../shared/ui'
-import type { ProjectStatus } from '../model'
+import { ButtonLink, Card, ErrorMessage, Page, StatusBadge } from '../../../shared/ui'
 import { useProjectsViewModel } from './useProjectsViewModel'
-
-const statusStyle: Record<ProjectStatus, string> = {
-    pending_upload: 'bg-zinc-100 text-zinc-700',
-    scanning: 'bg-blue-50 text-blue-700',
-    ready: 'bg-green-50 text-green-700',
-    rejected: 'bg-red-50 text-red-700',
-}
 
 export function ProjectsPage() {
     const vm = useProjectsViewModel()
@@ -43,9 +35,7 @@ export function ProjectsPage() {
                                         </Link>
                                     </td>
                                     <td className="px-4 py-3">
-                                        <span className={`rounded-full px-2 py-0.5 text-xs ${statusStyle[p.status]}`}>
-                                            {p.status.replace('_', ' ')}
-                                        </span>
+                                        <StatusBadge status={p.status} />
                                     </td>
                                     <td className="px-4 py-3 text-zinc-500">
                                         {new Date(p.created_at).toLocaleDateString()}

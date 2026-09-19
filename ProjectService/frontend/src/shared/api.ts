@@ -64,7 +64,28 @@ export async function http<T>(path: string, init: RequestInit = {}, auth = true)
             typeof body?.detail === 'string' ? body.detail : 'Something went wrong',
         )
     }
-    return res.json()
+    // 204 (DELETE) has no body to parse
+    return res.status === 204 ? (undefined as T) : res.json()
+}
+
+// Presigned PUT straight to storage: the file never goes through the API.
+// XHR rather than fetch, because it reports upload progress.
+export function putFile(url: string, file: File, onProgress: (percent: number) => void) {
+    return new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        xhr.open('PUT', url)
+        xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100))
+        }
+        xhr.onload = () =>
+            xhr.status >= 200 && xhr.status < 300
+                ? resolve()
+                : reject(new ApiError(xhr.status, `Upload failed (${xhr.status})`))
+        // the browser hides the reason; almost always missing CORS on the storage
+        xhr.onerror = () =>
+            reject(new Error('Upload failed: could not reach storage (is CORS set on MinIO?)'))
+        xhr.send(file)
+    })
 }
 
 export const postJson = (body: unknown): RequestInit => ({
