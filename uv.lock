@@ -296,6 +296,15 @@ wheels = [
 ]
 
 [[package]]
+name = "fake-bpy-module"
+version = "20260919"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/15/1e/b965f384157ba8016e929ebecde9e2db45bf494a64627bd30875c9a31143/fake_bpy_module-20260919.tar.gz", hash = "sha256:77fad8e4abdc998886612a3e9997a45c263ea48edd313d2bdec466856e7901c4", size = 967774, upload-time = "2026-09-19T09:55:13.914Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1d/55/719935c6d50d7df6eba4f2f33f09149b4c6c69582d2b90d3bb99fc550b5f/fake_bpy_module-20260919-py3-none-any.whl", hash = "sha256:3a4d410f36c4a2d1fb322c0efd71ae0afb27b0d0febbe5dedf1c293cbf255fc3", size = 1116018, upload-time = "2026-09-19T09:55:12.491Z" },
+]
+
+[[package]]
 name = "fastapi"
 version = "0.141.1"
 source = { registry = "https://pypi.org/simple" }
@@ -727,6 +736,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "fake-bpy-module" },
     { name = "pytest" },
 ]
 
@@ -737,7 +747,10 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=9.1.1" }]
+dev = [
+    { name = "fake-bpy-module", specifier = ">=20260919" },
+    { name = "pytest", specifier = ">=9.1.1" },
+]
 
 [[package]]
 name = "psycopg"

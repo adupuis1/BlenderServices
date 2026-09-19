@@ -23,4 +23,7 @@ build-backend = "uv_build"
 package = false
  
 [dependency-groups]
-dev = ["pytest>=9.1.1"]
+dev = [
+    "fake-bpy-module>=20260919",
+    "pytest>=9.1.1",
+]
