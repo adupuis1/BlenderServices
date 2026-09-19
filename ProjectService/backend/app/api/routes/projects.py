@@ -59,5 +59,32 @@ def get_project(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDe
     }
 
 @router.patch("/{project_id}")
-def path_project(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDep):
+def path_project(project_id: uuid.UUID, caller: CurrentCaller, body: ProjectUpdate, session: SessionDep):
     project = owned(session, project_id, caller.id)
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(project, field, value)
+    session.add(project)
+    session.commit()
+    session.refresh(project)
+
+@router.delete("/{project_id}", status_code=204)
+def delete_project(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDep):
+    project = owned(session, project_id, caller.id)
+    if project.status is ProjectStatus.SCANNING:
+        raise Conflict("Cannot delete a project while it is being scanned")
+    session.delete(project)
+    session.commit()
+    return Response(status_code=204)
+
+@router.post("/{project_id}/complete", response_model=ProjectPublic)
+def complete_upload(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDep):
+    project = owned(session, project_id, caller.id)
+    if project.status is not ProjectStatus.PENDING_UPLOAD:
+        raise Conflict(f"Project is already {project.status.value}")
+    if not storage.exists(project.blend_key):
+        raise DomainError("File has not been uploaded yet")
+    project.status = ProjectStatus.SCANNING
+    session.add(project)
+    session.commit()
+    session.refresh(project)
+    return project
