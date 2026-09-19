@@ -57,3 +57,7 @@ def get_project(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDe
         "project": ProjectPublic.model_validate(project, from_attributes=True),
         "details": project.project_details
     }
+
+@router.patch("/{project_id}")
+def path_project(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDep):
+    project = owned(session, project_id, caller.id)
