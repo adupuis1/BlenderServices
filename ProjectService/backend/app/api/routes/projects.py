@@ -58,7 +58,7 @@ def get_project(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDe
         "details": project.project_details
     }
 
-@router.patch("/{project_id}", response_mode=ProjectPublic)
+@router.patch("/{project_id}", response_model=ProjectPublic)
 def path_project(project_id: uuid.UUID, caller: CurrentCaller, body: ProjectUpdate, session: SessionDep):
     project = owned(session, project_id, caller.id)
     for field, value in body.model_dump(exclude_unset=True).items():
