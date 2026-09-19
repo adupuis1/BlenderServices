@@ -22,4 +22,4 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.exception_handler(DomainError)
 async def domain_error_handler(request: Request, exc: DomainError):
-    return JSONResponse(statuscode=exc.status_code, content={"detail": str(exc)})
+    return JSONResponse(status_code=exc.status_code, content={"detail": str(exc)})

@@ -68,7 +68,7 @@ services:
       - default
       - login
     depends_on:
-      - backend
+      - project-backend
 
 
 
