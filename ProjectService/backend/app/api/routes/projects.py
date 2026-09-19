@@ -66,6 +66,7 @@ def path_project(project_id: uuid.UUID, caller: CurrentCaller, body: ProjectUpda
     session.add(project)
     session.commit()
     session.refresh(project)
+    return project
 
 @router.delete("/{project_id}", status_code=204)
 def delete_project(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDep):
