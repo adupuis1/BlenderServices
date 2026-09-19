@@ -41,5 +41,8 @@ class Settings(BaseSettings):
     LEASE_MINUTES: int = 30
     MAX_ATTEMPTS: int = 3
 
+    # LOGIN_SERVICE_URL is where CONTAINERS reach it (JWKS fetch).
+    LOGIN_PUBLIC_URL: str = "http://localhost:8000"
+    
 
 settings = Settings()

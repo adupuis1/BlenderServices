@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Response, Query
 from sqlmodel import select
 
-from app.api.deps import CurrentCaller
+from common.deps import CurrentCaller
 
 from app.models import (
     Project, ProjectCreate, ProjectDetails, ProjectPublic, ProjectStatus, ProjectUpdate
@@ -40,7 +40,7 @@ def add_project(body: ProjectCreate, caller: CurrentCaller, session: SessionDep)
     }
 
 
-@router.get("", status_code=200)
+@router.get("", response_model=list[ProjectPublic])
 def get_projects(caller: CurrentCaller, session: SessionDep, limit: int = 100):
     return session.exec(
         select(Project)
@@ -50,7 +50,7 @@ def get_projects(caller: CurrentCaller, session: SessionDep, limit: int = 100):
     ).all()
 
 
-@router.get("{project_id}")
+@router.get("/{project_id}")
 def get_project(project_id: uuid.UUID, caller: CurrentCaller, session: SessionDep):
     project = owned(session, project_id, caller.id)
     return {

@@ -35,6 +35,8 @@ def _jwks() -> PyJWKClient:
 def caller_from_token(token: str) -> Caller:
     try:
         key = _jwks().get_signing_key_from_jwt(token).key
+    except jwt.InvalidTokenError as exc:
+        raise InvalidToken(str(exc)) from exc
     except (jwt.PyJWKClientError, httpx.HTTPError) as exc:
         raise InvalidToken(f"Could not fetch signing keys: {exc}") from exc
     
