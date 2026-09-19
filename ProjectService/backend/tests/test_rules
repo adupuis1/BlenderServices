@@ -1,0 +1,36 @@
+import uuid
+
+import pytest
+
+from app.models import ProjectDetails
+from app.services.rules import rejection_reason
+
+
+def details(**kwargs):
+    return ProjectDetails(project_id=uuid.uuid4(), engine="CYCLES", **kwargs)
+
+
+def test_a_clean_file_is_accepted():
+    assert rejection_reason(details()) is None
+
+
+@pytest.mark.parametrize("flag, fragment", [
+    ("has_registered_scripts", "registered text scripts"),
+    ("has_python_drivers", "Python drivers"),
+    ("freestyle_enabled", "Freestyle"),
+])
+def test_each_security_flag_rejects(flag, fragment):
+    assert fragment in rejection_reason(details(**{flag: True}))
+
+
+def test_external_files_are_counted():
+    reason = rejection_reason(details(external_paths=[
+        {"type": "image", "name": "brick", "path": "//tex/brick.png"},
+        {"type": "volume", "name": "smoke", "path": "/data/smoke.vdb"},
+    ]))
+    assert "2 external files" in reason
+
+
+def test_every_reason_is_reported_at_once():
+    reason = rejection_reason(details(has_python_drivers=True, freestyle_enabled=True))
+    assert "drivers" in reason and "Freestyle" in reason
